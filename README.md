@@ -1,0 +1,1 @@
+# newcomers-backend-study-team-1
