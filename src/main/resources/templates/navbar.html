@@ -1,0 +1,15 @@
+<div class="nav" th:fragment="navbar">
+    <a class="logo">SpringMall</a>
+    <a href="/list">List</a>
+    <a href="/write">Write</a>
+    <a href="/register">Register</a>
+    <a href="/login">LogIn</a>
+    <div sec:authorize="isAuthenticated()">
+        <a href="/logout">logOut</a>
+    </div>
+    <a href="/my-page">MyPage</a>
+    <div style="display: flex" sec:authorize="isAuthenticated()">
+        <h5 sec:authentication="principal.username"></h5>
+        <p>님 환영합니다.</p>
+    </div>
+</div>

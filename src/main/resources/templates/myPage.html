@@ -1,0 +1,32 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link href="/main.css" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{ navbar.html::navbar }"></div>
+<h4>마이페이지임</h4>
+
+<div sec:authentication="principal"></div>
+<div sec:authentication="principal.username"></div>
+<div sec:authorize="hasAuthority('ROLE_USER')">
+    <h4>일반유저 권한임</h4>
+</div>
+<!--
+세션 기반 인가 관리:
+서버의 세션에 저장된 사용자 정보를 타임리프 태그 하나로 손쉽게 꺼내 쓰는
+스프링 시큐리티의 강력한 통합 기능을 활용했습니다.
+
+역할 기반 접근 제어:
+sec:authorize를 활용해 사용자 권한에 따라 UI를 동적으로 구성함으로써,
+관리자 페이지나 특정 기능에 대한 접근구현의 바탕 마련.
+
+(관리자 페이지는 미구현, 마이페이지에서 사용자 주문 내역 추가 예정)
+-->
+
+</body>
+</html>

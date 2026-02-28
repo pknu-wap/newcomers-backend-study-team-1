@@ -1,0 +1,45 @@
+<!-- 상품 주문 기능은 구현중에 있습니다
+
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link href="/main.css" rel="stylesheet">
+</head>
+<body>
+
+<div th:replace="~{ navbar.html::navbar }"></div>
+
+<div class="shop-cart">
+    <p th:text="${'상품명 :' + item.title }"></p>
+    <p th:text="${'가격 :' + item.price }"></p>
+
+    <button onclick="changeQty(-1)">-</button>
+    <input type="number" id="quantity" value="1" oninput="updateTotal()">
+    <button onclick="changeQty(1)">+</button>
+</div>
+
+<form th:action="/order" method="POST">
+    <button>주문하기</button>
+</form>
+
+<script th:inline="javascript">
+    const title = /*[[${item.title}]]*/ 'default title';
+    const price = /*[[${item.price}]]*/ 'default price';
+
+    function changeQty(diff){
+
+    }
+    function updateTotal(){
+
+    }
+
+</script>
+
+</body>
+</html>
+-->

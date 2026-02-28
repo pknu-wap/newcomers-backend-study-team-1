@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link href="/main.css" rel="stylesheet">
+</head>
+<body>
+
+<div th:replace="~{ navbar.html::navbar }"></div>
+
+<form action="/search" method="POST">
+    <input name="keyword" style="display: inline">
+    <button>검색</button>
+</form>
+
+<div class="card" th:each="i : ${items}">
+    <img src="https://placehold.co/300">
+    <div>
+        <a th:href="@{/detail/{id}(id=${i.id})}" th:text="${i.title}">상품</a>
+        <p th:text="${i.price + '원'}">가격</p>
+        <a th:href="@{/edit/{id}(id=${i.id})}">수정하기</a>
+        <button class="delete-btn" th:data-id="${i.id}">삭제하기</button>
+    </div>
+</div>
+<div class="pagination">
+    <span th:each="page : ${#numbers.sequence(1, pageCount)}">
+        <!--검색 결과 유무에 따른 페이징 URL 처리를 코드 중복 없이 구현.
+        searchKeyword라는 데이터가 서버로 부터 전달 된 경우 - /search로 GET요청하는 링크 생성
+        searchKeyword라는 데이터가 서버로 부터 전달 되지 않은 경우 - /list로 GEt요청 하는 링크 생성
+        -->
+        <a th:href="@{${searchKeyword != null ? '/search' : '/list'}(keyword=${searchKeyword ?: null}, page=${page})}">
+         [[${page}]]&nbsp;
+        </a>
+    </span>
+</div>
+
+<script>
+    /*
+     AJAX 사용한 삭제 구현
+     document.querySelectorAll + forEach로 각 버튼에 개별 이벤트 바인딩.
+     Query String 전송: /delete?docid=ID 형태로 서버에 삭제 요청.
+     서버 응답 성공 시 새로고침 없이 해당 요소를 display: none 처리.
+     */
+    document.querySelectorAll('.delete-btn').forEach(function(el){
+        el.addEventListener('click',function(e){
+            fetch('/delete?docid=' + e.currentTarget.dataset.id,{
+                method: 'DELETE'
+            }).then(r=>r.text())
+                .then(result=>{
+                    console.log(result);
+                    e.target.parentElement.parentElement.style.display = 'none';
+                })
+        })
+    })
+</script>
+
+</body>
+</html>
