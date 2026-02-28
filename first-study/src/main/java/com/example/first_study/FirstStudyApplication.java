@@ -3,8 +3,10 @@ package com.example.first_study;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+
 /*
+@SpringBootApplication
+
 @SpringBootConfiguration
 -> @Configuration + Spring Boot 특성 활용 가능
 -> 보통 main 클래스에서만 사용
@@ -14,6 +16,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 -> 클래스들을 자동으로 Spring Bean(Spring 컨테이너가 관리하는 객체)로 등록
 -> @Component, @Service, @Repository, @Controller, @RestController가 붙은 클래스 자동 감지
 */
+
+
+@SpringBootApplication
 public class FirstStudyApplication {
 
 	public static void main(String[] args) {
@@ -32,3 +37,4 @@ public class FirstStudyApplication {
 	}
 
 }
+// Spring Framework 에 대해서 더 공부하기...

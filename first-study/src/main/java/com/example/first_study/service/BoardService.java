@@ -3,26 +3,28 @@ package com.example.first_study.service;
 import com.example.first_study.Board;
 import com.example.first_study.repository.BoardRepository;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional; // 묶음으로 작업 처리(수정/삭제)
 
 import java.util.List;
 import java.util.Optional;
 
-@Setter
+// @Setter
 @Getter
 
+@RequiredArgsConstructor // final필드만으로도 자동으로 생성자 만듦
+// @AllArgsConstructor <<<<<<<<< 공부!!!!!!
 @Service // Bean 등록
 public class BoardService {
     private final BoardRepository boardRepository; // 레파지토리 생성
 
-    public BoardService(BoardRepository boardRepository) {
-        this.boardRepository = boardRepository;
-    } // 의존성 주입 << 더 공부!!!!
+//    public BoardService(BoardRepository boardRepository) {
+//        this.boardRepository = boardRepository;
+//    } // 의존성 주입 << 더 공부!!!!
 
     public Board create(Board board) { // 글 생성(저장) - create
-        board.onCreate(); // createdAt에 현재 시간 저장(수동으로 호출해야함)
+        // board.onCreate(); // createdAt에 현재 시간 저장(수동으로 호출해야함)
         // @PrePersist 사용 가능!!!! 공부!!!!!!!!!!!!!!!!!!!!!!!!!
         return boardRepository.save(board); // save() : JPA 기본 제공
     }
@@ -62,8 +64,10 @@ public class BoardService {
             throw new InvalidBoardException("해당 id의 게시글이 없습니다.");
         }
         Board board = result.get();
-        board.setTitle(title);
-        board.setContent(content); // 객체 값 변경 -> 트랜잭션 끝날 때 변경 내용 db 전송
+        board.update(title, content); // setter 빼고 update 메서드 사용
+
+//        board.setTitle(title);
+//        board.setContent(content); // 객체 값 변경 -> 트랜잭션 끝날 때 변경 내용 db 전송
     }
 
     @Transactional
@@ -77,3 +81,6 @@ public class BoardService {
     }
 
 }
+
+// @Builder 어노테이션 -> 빌더 패턴 사용 도전
+// save, update, delete 에서는 @Transactional 사용
