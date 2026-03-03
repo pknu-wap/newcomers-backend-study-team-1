@@ -2,6 +2,7 @@ package com.bumboo.shop.Item;
 
 import com.bumboo.shop.comment.Comment;
 import com.bumboo.shop.comment.CommentRepository;
+import com.bumboo.shop.sales.Sales;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -201,15 +202,6 @@ public class ItemController {
         return "list.html";
     }
 
-    /*
-     주문 페이지 이동 및 연관 데이터 준비
-     개발 진행 중.
-    @GetMapping("/order")
-    public String orderPage(@PathVariable Long id,Model model){
-        Item result = itemRepository.findById(id).orElseThrow(() -> new RuntimeException("해당 아이템이 없습니다."));
-        model.addAttribute("item",result);
-        return "orderPage.html";
-    }
-    */
+
 }
 

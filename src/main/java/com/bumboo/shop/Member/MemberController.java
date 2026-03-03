@@ -1,15 +1,20 @@
 package com.bumboo.shop.Member;
 
+import com.bumboo.shop.sales.Sales;
+import com.bumboo.shop.sales.SalesRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
 public class MemberController {
 
-
+    private final SalesRepository salesRepository;
     private final MemberRepository memberRepository;
     private final MemberService memberService;
 
@@ -20,6 +25,8 @@ public class MemberController {
 
     @PostMapping("/member")
     String addMember(@ModelAttribute Member member){
+        System.out.println(member.getId());
+        System.out.println(member.getPassword());
         memberService.RegisterMember(member);
         return "redirect:/list";
     }
@@ -30,9 +37,12 @@ public class MemberController {
     }
 
     @GetMapping("/my-page")
-    String myPage(Authentication auth) {
+    String myPage(Authentication auth, Model model) {
         MemberService.CustomUser user = (MemberService.CustomUser) auth.getPrincipal();
-        System.out.println(user.getDisplayName());
+        Long user_id = user.getId();
+        List<Sales> result = salesRepository.findAllBymemberIdOrderByCreatedAtAsc(user_id);
+
+        model.addAttribute("sales",result);
         return "myPage.html";
     }
 

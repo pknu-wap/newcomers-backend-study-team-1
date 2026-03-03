@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import org.jspecify.annotations.Nullable;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -32,11 +33,7 @@ public class MemberService implements UserDetailsService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
-    /*
-     회원가입 비즈니스 로직
-     보안 핵심: 패스워드는 해시 함수(BCrypt)로 암호화하여 저장.
-     (DB가 탈취되더라도 사용자 비밀번호를 알 수 없도록 설계)
-     */
+
     public void RegisterMember(@ModelAttribute Member member){
         String hash = passwordEncoder.encode(member.getPassword());
         member.setPassword(hash);
@@ -46,7 +43,19 @@ public class MemberService implements UserDetailsService {
 
     /*
      Spring Security의 인증 단계에서 호출되는 메서드
+     loadUserByUsername = DB에서 데이터를 조회해서, spring security가 이해 가능한 객체로 만드는 과정.
+
+     User/CustomUser 객체 = 인증을 위한 최종 규젹서,
+     spring security는 데이만 던져주면 이해하지 못함.
+
      유저가 입력한 username으로 DB에서 정보를 찾아 UserDetails 객체로 변환함.
+
+     spring security 내부의 핵심 엔진 AuthenticationManager
+     에서 사용자가 입력한 정보와 UserDetailsService가 반환한 정보를 자동으로 대조하여
+     인증을 처리하고 쿠키를 발급 해 준다.
+
+     개발자는 클래스 내부에 (loadUserByUsername + User or CustomUser) 객체 생성 만
+      구현해놓으면, 나머지는 알아서 내부적 처리를 해준다.
      */
     @Override
     public UserDetails loadUserByUsername(String username) {
@@ -58,38 +67,40 @@ public class MemberService implements UserDetailsService {
         authorities.add(new SimpleGrantedAuthority("USER"));
 
         // 기본 User 객체에는 없는 displayName을 다루기 위해 CustomUser로 확장
+        // id변수도 추가
         String displayName = user.getDisplayName();
-        var a = new CustomUser(user.getUsername(), user.getPassword(), authorities, displayName);
+        Long id = user.getId();
+        var a = new CustomUser(user.getUsername(), user.getPassword(), authorities, displayName, id);
         return a;
     }
 
-    /*
-     extends : 객체 확장, 시큐리티의 기본 User 클래스를 상속받아 커스텀 필드 추가
-     principal.displayName으로 접근할 수 있게 됨.
-     */
-    class CustomUser extends User{
-        private String displayName;
+    public class CustomUser extends User{
+        private String displayName; //User 객체에 없는 커스텀 변수들
+        private Long id;
 
         public String getDisplayName() {
             return displayName;
         }
+        public Long getId(){
+            return id;
+        }
 
+        //생성자
         public CustomUser(
                 String username,
                 String password,
                 Collection<? extends GrantedAuthority> authorities,
-                String displayName
+                String displayName,
+                Long id
         ) {
+            //super( 부모 파라미터), 상속받은 부모 요소의 생성자 역할을 함
             super(username, password, authorities);
+            //자식요소의 멤버 변수 초기화도 따로
             this.displayName = displayName;
+            this.id = id;
         }
     }
 
-     /* DTO
-     엔티티를 서비스 외부로 전달할 때 사용하는 데이터 전송용 객체.
-     @Getter 어노테이션을 통해 외부(Controller)에서 필드에 접근 가능하도록 함.
-     현재 이론/사용 만 공부하였고 실제 적용은 추후 할 예정.
-     */
     @Getter
     public static class MemberDTO{
         private String username;

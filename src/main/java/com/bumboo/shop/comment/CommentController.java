@@ -17,8 +17,6 @@ public class CommentController {
     @PostMapping("/comment")
     @ResponseBody
     public CommentService.CommentDTO addComment(@RequestBody Comment comment, Authentication auth){
-        System.out.println(comment.getContent());
-        System.out.println(comment.getParentId());
 
         User user = (User)auth.getPrincipal();
         String username = user.getUsername();
