@@ -31,7 +31,7 @@ public class Board {
 
     // strategy 명시!!!!!!!!!!!
     @Id // pk
-    @GeneratedValue(strategy = GenerationType.SEQUENCE) // pk값 db에서 자동 생성
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // pk값 db에서 자동 생성
     // IDENTITY(AUTO_INCREMENT, Mysql에서 주로 사용), AUTO, SEQUENCE(H2 주로 사용), TABLE
     private Long id;
     private String title;
