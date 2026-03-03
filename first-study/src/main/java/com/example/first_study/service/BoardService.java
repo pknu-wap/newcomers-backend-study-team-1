@@ -101,12 +101,19 @@ public class BoardService {
         if (result.isEmpty()) {
             throw new InvalidBoardException("해당 id의 게시글이 없습니다.");
         }
-        Board board = Board.builder()
-                .id(id)
-                .title(requestDTO.getTitle())
-                .content(requestDTO.getContent())
-                .build();
-        boardRepository.save(board);
+        Board board = result.get();
+        if (requestDTO.getTitle() != null) {
+            board.updateTitle(requestDTO.getTitle());
+        }
+        if (requestDTO.getContent() != null) {
+            board.updateContent(requestDTO.getContent());
+        }
+//        Board board = Board.builder()
+//                .id(id)
+//                .title(requestDTO.getTitle())
+//                .content(requestDTO.getContent())
+//                .build();
+//        boardRepository.save(board);
 
 //        board.setTitle(title);
 //        board.setContent(content); // 객체 값 변경 -> 트랜잭션 끝날 때 변경 내용 db 전송

@@ -47,7 +47,7 @@ public class BoardController {
     }
 
     //@RequestMapping(value = "/boards/{id}", method = RequestMethod.PUT)
-    @PutMapping("/boards/{id}")
+    @PatchMapping("/boards/{id}")
     //@ResponseBody
     public void update(@PathVariable Long id, @RequestBody BoardUpdateRequestDTO board) {
         // @PathVariable Long id : 수정할 게시글의 id
@@ -73,3 +73,8 @@ public class BoardController {
 // DTO에 대해 더 공부!!!!!!!!! (왜 사용해야할까?)
 
 // PUT 메소드 대신 PATCH 메소드 구현 공부!!!!! (+ http method 방식의 차이
+
+/*
+PUT: 자원의 전체를 업데이트(기존 값을 모두 알고 있어야함)
+PATCH: 자원의 일부를 업데이트(변경할 값만 알아도 됨)
+*/
