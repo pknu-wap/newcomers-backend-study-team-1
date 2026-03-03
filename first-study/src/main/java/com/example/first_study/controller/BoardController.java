@@ -1,6 +1,8 @@
 package com.example.first_study.controller;
 
 import com.example.first_study.Board;
+import com.example.first_study.dto.BoardCreateRequestDTO;
+import com.example.first_study.dto.BoardUpdateRequestDTO;
 import com.example.first_study.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,7 +21,7 @@ public class BoardController {
     @PostMapping("/boards")
     // POST 요청이 오면 해당 메서드 실행
     //@ResponseBody // view 대신 JSON으로 반환
-    public Board create(@RequestBody Board board) { // JSON을 Board객체로 변환해서 받음
+    public Board create(@RequestBody BoardCreateRequestDTO board) { // JSON을 Board객체로 변환해서 받음
         return boardService.create(board); // service에 저장
     }
 
@@ -47,10 +49,10 @@ public class BoardController {
     //@RequestMapping(value = "/boards/{id}", method = RequestMethod.PUT)
     @PutMapping("/boards/{id}")
     //@ResponseBody
-    public void update(@PathVariable Long id, @RequestBody Board board) {
+    public void update(@PathVariable Long id, @RequestBody BoardUpdateRequestDTO board) {
         // @PathVariable Long id : 수정할 게시글의 id
         // @RequestBody Board board : 새로 넣을 Board(title, content)를 받음
-        boardService.update(id, board.getTitle(), board.getContent());
+        boardService.update(id, board);
         // 해당 id의 title, content 변경
     }
 
