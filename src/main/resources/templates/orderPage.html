@@ -1,0 +1,71 @@
+
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link href="/main.css" rel="stylesheet">
+</head>
+<body>
+
+<div th:replace="~{ navbar.html::navbar }"></div>
+
+<div class="shop-cart">
+    <p th:text="${'상품명 :' + item.title }"></p>
+    <p th:text="${'가격 :' + item.price }"></p>
+
+    <!-- 이벤트 핸들러="이벤트 발생 시 호출 할 함수"
+    버튼 클릭 시 = "changeQty(diff)", input값 변경 감지 시 = "updateTotal()"
+    버튼을 통해 상품 주문 갯수를 1씩 변경 하거나, input에 숫자를 직접 입력 가능하도록 했다.
+    changeQty(diff)는 총 가격을 계산 후, updateTotal()을 내부적으로 호출하여
+    변경된 값을 input에 적용하는 역할을 수행한다.
+    -->
+    <button onclick="changeQty(-1)">-</button>
+    <input type="number" id="quantity" value="1" oninput="updateTotal()">
+    <button onclick="changeQty(1)">+</button>
+
+    <form action="/order" method="POST">
+        <p>총 결제 금액: <span id="total-price" th:text="${item.price}"></span>원</p>
+        <input id="title-data" name="itemName" type="hidden" th:value="${ item.title }">
+        <input id="price-data" name="price" type="hidden" th:value="${ item.price }">
+        <input id="count-data" name="count" type="hidden" th:value="1">
+        <button type="submit">주문하기</button>
+
+        <!-- th:value 를 사용해서 default값을 설정, 수량 변경 사항이 생기면(갯수 직접 입력/ +- 버튼 누름),
+        JS에서 value를 수정하는 방식을 도입함.
+        -->
+
+    </form>
+</div>
+
+
+<script th:inline="javascript">
+    //script태그 내부에서 서버 데이터를 쓸 수 있도록 하는 th:inline="javascript"
+    const title = /*[[${item.title}]]*/ 'default title';
+    const price = /*[[${item.price}]]*/ 'default price';
+
+    const qty = document.getElementById('quantity')
+    const totalDisplay = document.getElementById('total-price')
+
+    function changeQty(diff){
+        let currValue = parseInt(qty.value);
+        if((currValue + diff) >=1 )  {
+            qty.value = currValue + diff;
+            updateTotal();
+        }
+    }
+    function updateTotal(){
+        let totalPrice = qty.value * price;
+        totalDisplay.innerText = (totalPrice).toLocaleString();
+
+        document.getElementById('price-data').value = totalPrice;
+        document.getElementById('count-data').value = qty.value;
+    }
+
+</script>
+
+</body>
+</html>

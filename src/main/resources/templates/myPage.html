@@ -1,0 +1,32 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link href="/main.css" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{ navbar.html::navbar }"></div>
+<h4>마이페이지임</h4>
+
+<div sec:authentication="principal"></div>
+<div sec:authentication="principal.username"></div>
+<div sec:authorize="hasAuthority('ROLE_USER')">
+    <h4>일반유저 권한임</h4>
+</div>
+
+<div th:if="${not #lists.isEmpty(sales)}">
+    <div th:each="i : ${sales}">
+        <p th:text="|상품명: ${i.itemName}|"></p>
+        <p th:text="|총 주문 금액: ${i.price}|"></p>
+    </div>
+</div>
+
+<div th:if="${#lists.isEmpty(sales)}">
+    <p>판매 내역이 없습니다.</p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,25 @@
+
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link href="/main.css" rel="stylesheet">
+</head>
+<body>
+
+<div th:replace="~{ navbar.html::navbar }"></div>
+
+<div th:if="${not #lists.isEmpty(sales)}">
+    <div th:each="i : ${sales}">
+        <p th:text="|주문자: ${i.member.username}|"></p>
+        <p th:text="|상품명: ${i.itemName}|"></p>
+        <p th:text="|총 주문 금액: ${i.price}|"></p>
+    </div>
+</div>
+
+</body>
+</html>

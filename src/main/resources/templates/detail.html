@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="/main.css" rel="stylesheet">
+</head>
+<body>
+
+<div th:replace="~{ navbar.html::navbar }"></div>
+
+<div class="detail">
+    <h4>상세페이지</h4>
+    <img th:src="${item.image != null ? item.image : '/default-image.png'}">
+    <h4 th:text="${ item.title}">상품명</h4>
+    <p th:text="${ item.price + '원'}">가격</p>
+</div>
+
+<form th:action="@{/order/{id}(id = ${parentId})}" method="GET">
+    <button>주문하기</button>
+</form>
+
+<div class="comment-box">
+    <div class="comment-item" th:each="c : ${comments}">
+        <strong th:text="${c.username}">작성자</strong>:
+        <span th:text="${c.content}">댓글 내용</span>
+    </div>
+</div>
+
+<input class="comment">
+<button class="comment-button" type="button" th:data-parent="${ parentId }">댓글 쓰기</button>
+
+<script>
+    document.querySelector('.comment-button').addEventListener('click',function(e){
+        const content= document.querySelector('.comment').value;
+        const parentId = e.target.dataset.parent;
+        /*
+         AJAX 기반 댓글 등록
+         1. 비동기 요청: 화면 전체 새로고침 없이 특정 데이터만 서버에 전송.
+         2. JSON 통신: 자바스크립트 객체를 JSON 문자열로 변환(stringify)하여 전송.
+         */
+        fetch(`/comment`,{
+            method : 'POST',
+            headers: {'Content-Type': 'application/json' },
+            body : JSON.stringify({
+                content : content,
+                parentId : parentId
+            })
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('네트워크 응답 에러');
+            return response.json();
+        })
+        .then((data)=>{
+            /*
+             동적 DOM 업데이트
+             - 서버로부터 응답받은 최신 데이터를 기반으로 새로운 HTML 요소 생성.
+             - insertAdjacentHTML: 기존 댓글 목록 유지하며 마지막에 새 요소 추가 (DOM 조작 최적화).
+             */
+            console.log(data);
+            const newCommentHtml = `
+                <div class="comment-item">
+                    <strong>${data.username}</strong>: <span>${data.content}</span>
+                </div>
+            `;
+            document.querySelector('.comment-box').insertAdjacentHTML('beforeend', newCommentHtml);
+            document.querySelector('.comment').value = ''; //입력창 초기화
+        })
+    })
+</script>
+
+</body>
+</html>

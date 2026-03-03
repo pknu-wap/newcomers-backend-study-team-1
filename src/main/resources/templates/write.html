@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link href="/main.css" rel="stylesheet">
+</head>
+<body>
+
+<div th:replace="~{ navbar.html::navbar }"></div>
+
+<form action="/add" method="POST">
+    <input name="title" placeholder="제품명">
+    <input name="price" placeholder="가격">
+
+    <input type="file" onchange="getURL(this)">
+    <input type="hidden" name="image" id="image-url">
+    <img src="" style="width: 200px;">
+
+    <button type="submit">전송</button>
+</form>
+
+<script>
+    /*
+     S3 Presigned URL 업로드 steps)
+     1. 클라이언트가 서버에 '나 이 이름의 파일 올릴 건데 허가해줘'라고 요청 (/presigned-url)
+     2. 서버는 S3로부터 일회용 업로드 권한(URL)을 받아 클라이언트에게 전달
+     3. 클라이언트는 받은 URL을 이용해 S3로 직접 파일을 PUT
+     */
+    async function getURL(e){
+        let name = encodeURIComponent(e.files[0].name)
+        // 파일명에 한글/특수문자가 있을 경우를 대비한 인코딩
+
+        // Step 1: 서버로부터 Presigned URL 받아오기
+        let result = await fetch('/presigned-url?filename=' + name);
+        result = await result.text();
+
+        // Step 2: S3로 직접 파일 전송
+        let 결과 = await fetch(result, {
+            method: 'PUT',
+            body: e.files[0]
+        })
+
+        // Step 3: 업로드 완료 후 처리
+        // 결과.url에는 쿼리스트링(권한 정보)이 포함되어 있으므로, 순수 이미지 주소만 추출함.
+        console.log(결과.url.split("?")[0])
+        if(결과.ok){
+            // 이미지 미리보기 업데이트
+            document.querySelector('img').src = 결과.url.split("?")[0]
+            // DB 저장을 위해 hidden input에 URL 값 저장
+            document.getElementById('image-url').value = 결과.url.split("?")[0]
+        }
+    }
+</script>
+
+</body>
+</html>
