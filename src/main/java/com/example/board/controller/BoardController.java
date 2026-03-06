@@ -11,7 +11,7 @@ public class BoardController {
 
     private final BoardService boardService;
 
-    // 🔥 생성자 직접 작성 (중요)
+    // 🔥 생성자 직접 작성 (중요)  dleodus
     public BoardController(BoardService boardService) {
         this.boardService = boardService;
     }
